@@ -16,7 +16,7 @@ const API_KEY = process.env.API_KEY;
 
 describe('full test suite', () => {
 
-        it.each(phoneNumbers, `from the phone number, it should return at least 1 user email,`, ['element'], (element, done) => {
+        it.each(phoneNumbers, `from the phone number, it should return the contact with at least 1  email,`, ['element'], (element, done) => {
             axios.get(`https://api.peopledatalabs.com/v5/person/enrich?pretty=true&api_key=${API_KEY}&phone=${element}`)
                 .then((response) => {
                     return response.data;
@@ -27,7 +27,7 @@ describe('full test suite', () => {
                    done();
                 }).catch(done);
             })
-             it.each(phoneNumbers, `from the phone number, it should return the user with at least 1 phone number`, ['element'], (element, done) => {
+             it.each(phoneNumbers, `from the phone number, it should return the contact with at least 1 phone number`, ['element'], (element, done) => {
                 axios.get(`https://api.peopledatalabs.com/v5/person/enrich?pretty=true&api_key=${API_KEY}&phone=${element}`)
                     .then((response) => {
                         return response.data;
@@ -46,7 +46,7 @@ describe('full test suite', () => {
                        done();
                     }).catch(done);
              });
-             it.each(phoneNumbers, `from the phone number, it should return the user with a job title`, ['element'], (element, done) => {
+             it.each(phoneNumbers, `from the phone number, it should return the contact with a job title`, ['element'], (element, done) => {
                 axios.get(`https://api.peopledatalabs.com/v5/person/enrich?pretty=true&api_key=${API_KEY}&phone=${element}`)
                     .then((response) => {
                         return response.data;
@@ -61,7 +61,7 @@ describe('full test suite', () => {
                     }).catch(done);
              });
 
-             it.each(phoneNumbers, `from the phone number, it should return the user with a linkedin_url`, ['element'], (element, done) => {
+             it.each(phoneNumbers, `from the phone number, it should return the contact with a linkedin_url`, ['element'], (element, done) => {
                 axios.get(`https://api.peopledatalabs.com/v5/person/enrich?pretty=true&api_key=${API_KEY}&phone=${element}`)
                     .then((response) => {
                         return response.data;
@@ -74,7 +74,7 @@ describe('full test suite', () => {
                     }).catch(done);
              });
 
-             it.each(phoneNumbers, `from the phone number, it should return the user with a linkedinId`, ['element'], (element, done) => {
+             it.each(phoneNumbers, `from the phone number, it should return the contact with a linkedinId`, ['element'], (element, done) => {
                 axios.get(`https://api.peopledatalabs.com/v5/person/enrich?pretty=true&api_key=${API_KEY}&phone=${element}`)
                     .then((response) => {
                         return response.data;
@@ -89,6 +89,80 @@ describe('full test suite', () => {
                        done();
                     }).catch(done);
              });
+             //////////////////////////name-company////////////////////////////////////////////////////////////////
+             it.each(nameCompany, `from the person's name and current company, it should return the contact with at least 1 email,`, ['element'], (element, done) => {
+                axios.get(`https://api.peopledatalabs.com/v5/person/enrich?pretty=true&api_key=${API_KEY}&phone=${element}`)
+                    .then((response) => {
+                        return response.data;
+                    })
+                    .then((result) => { 
+                        expect(result).to.be.a('object');
+                        expect(result.data.emails.length).to.be.greaterThan(0);
+                       done();
+                    }).catch(done);
+                })
+                 it.each(nameCompany, `from the person's name and current company, it should return the contact with at least 1 phone number`, ['element'], (element, done) => {
+                    axios.get(`https://api.peopledatalabs.com/v5/person/enrich?pretty=true&api_key=${API_KEY}&phone=${element}`)
+                        .then((response) => {
+                            return response.data;
+                        })
+                        .then((result) => { 
+                            expect(result).to.be.a('object');
+                            expect(result).to.assert.one.of(
+                                function(result) {
+                                    expect(result.data).to.be.true;
+                                    expect(result.data.mobile_phone).to.not.be.null;
+                                    expect(result.data.mobile_phone).to.not.be.undefined;
+                                    expect(result.data.mobile_phone).to.not.be.empty;
+                                }, function(result){
+                                    expect(result.data.phone_numbers.length).to.be.greaterThan(0);
+                                });
+                           done();
+                        }).catch(done);
+                 });
+                 it.each(nameCompany, `from the person's name and current company, it should return the contact with a job title`, ['element'], (element, done) => {
+                    axios.get(`https://api.peopledatalabs.com/v5/person/enrich?pretty=true&api_key=${API_KEY}&name=${element.name}&company=${element.company}`)
+                        .then((response) => {
+                            return response.data;
+                        })
+                        .then((result) => { 
+                            console.log("this is the job title ", result.data.job_title);
+                            expect(result).to.be.a('object');
+                            expect(result.data.job_title).to.not.be.null;
+                            expect(result.data.job_title).to.not.be.undefined;
+                            expect(result.data.job_title).to.not.be.empty;
+                           done();
+                        }).catch(done);
+                 });
+    
+                 it.each(nameCompany, `from the person's name and current company, it should return the contact with a linkedin_url`, ['element'], (element, done) => {
+                    axios.get(`https://api.peopledatalabs.com/v5/person/enrich?pretty=true&api_key=${API_KEY}&name=${element.name}&company=${element.company}`)
+                        .then((response) => {
+                            return response.data;
+                        })
+                        .then((result) => { 
+                           expect(result).to.be.a('object');
+                           expect(result.data.profiles);
+                           expect(propertyValueInArray(result.data.profiles, 'network', 'linkedin')).to.be.true;
+                           done();
+                        }).catch(done);
+                 });
+    
+                 it.each(nameCompany, `from the person's name and current company, it should return the contact with a linkedinId`, ['element'], (element, done) => {
+                    axios.get(`https://api.peopledatalabs.com/v5/person/enrich?pretty=true&api_key=${API_KEY}&name=${element.name}&company=${element.company}`)
+                        .then((response) => {
+                            return response.data;
+                        })
+                        .then((result) => { 
+                           console.log()
+                           expect(result).to.be.a('object');
+                           expect(result.data.linkedin_id);
+                           expect(result.data.linkedin_id).to.not.be.null;
+                           expect(result.data.linkedin_id).to.not.be.undefined;
+                           expect(result.data.linkedin_id).to.not.be.empty;
+                           done();
+                        }).catch(done);
+                 });
 
 });
 
