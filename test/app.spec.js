@@ -19,30 +19,73 @@ const API_KEY = process.env.API_KEY;
 
 describe('the phone', () => {
 
-        it.each(phoneNumbers, `from the phone number, it should return the user with phone number, email, job title, mobile phone`, ['element'], (element, done) => {
-            // console.log("this is the forEach item ", );
+        it.each(phoneNumbers, `from the phone number, it should return at least 1 user email,`, ['element'], (element, done) => {
             axios.get(`https://api.peopledatalabs.com/v5/person/enrich?pretty=true&api_key=${API_KEY}&phone=${element}`)
                 .then((response) => {
                     return response.data;
                 })
                 .then((result) => { 
-                    console.log("this is the result ", result);
                     expect(result).to.be.a('object');
-                    // expect(result.data.mobile_phone).to.not.be.null;
-                    // expect(result.data.mobile_phone).to.not.be.undefined;
-                    // expect(result.data.mobile_phone).to.not.be.empty;
-                    // expect(result.data.work_email).to.not.be.null;
-                    // expect(result.data.work_email).to.not.be.undefined;
-                    // expect(result.data.work_email).to.not.be.empty;
-                    expect(result.data.job_title).to.not.be.null;
-                    expect(result.data.job_title).to.not.be.undefined;
-                    expect(result.data.job_title).to.not.be.empty;
-                    expect(result.data.linkedin_url ).to.not.be.null;
-                    expect(result.data.linkedin_url).to.not.be.undefined;
-                    expect(result.data.linkedin_url).to.not.be.empty;
-
+                    expect(result.data.emails.length).to.be.greaterThan(0);
                    done();
                 }).catch(done);
             })
 
+            it.each(phoneNumbers, `from the phone number, it should return the user with at least 1 phone number`, ['element'], (element, done) => {
+                axios.get(`https://api.peopledatalabs.com/v5/person/enrich?pretty=true&api_key=${API_KEY}&phone=${element}`)
+                    .then((response) => {
+                        return response.data;
+                    })
+                    .then((result) => { 
+                        expect(result).to.be.a('object');
+        
+                       done();
+                    }).catch(done);
+             });
+             it.each(phoneNumbers, `from the phone number, it should return the user with at least 1 phone number`, ['element'], (element, done) => {
+                axios.get(`https://api.peopledatalabs.com/v5/person/enrich?pretty=true&api_key=${API_KEY}&phone=${element}`)
+                    .then((response) => {
+                        return response.data;
+                    })
+                    .then((result) => { 
+                        expect(result).to.be.a('object');
+                        expect(result).to.assert.one.of(
+                            function(result) {
+                                expect(result.data).to.be.true;
+                                expect(result.data.mobile_phone).to.not.be.null;
+                                expect(result.data.mobile_phone).to.not.be.undefined;
+                                expect(result.data.mobile_phone).to.not.be.empty;
+                            }, function(result){
+                                expect(result.data.phone_numbers.length).to.be.greaterThan(0);
+                            });
+                       done();
+                    }).catch(done);
+             });
+             it.each(phoneNumbers, `from the phone number, it should return the user with at a job title r`, ['element'], (element, done) => {
+                axios.get(`https://api.peopledatalabs.com/v5/person/enrich?pretty=true&api_key=${API_KEY}&phone=${element}`)
+                    .then((response) => {
+                        return response.data;
+                    })
+                    .then((result) => { 
+                        console.log("this is the job title ", result.data.job_title);
+                        expect(result).to.be.a('object');
+                        expect(result.data.job_title).to.not.be.null;
+                        expect(result.data.job_title).to.not.be.undefined;
+                        expect(result.data.job_title).to.not.be.empty;
+                       done();
+                    }).catch(done);
+             });
+
 });
+
+                        // expect(result.data.mobile_phone).to.not.be.null;
+                        // expect(result.data.mobile_phone).to.not.be.undefined;
+                        // expect(result.data.mobile_phone).to.not.be.empty;
+                        // expect(result.data.phone_numbers.length).to.be.greaterThan(0);
+                        // expect(result.data.emails.length).to.be.greaterThan(2);
+                        // expect(result.data.job_title).to.not.be.null;
+                        // expect(result.data.job_title).to.not.be.undefined;
+                        // expect(result.data.job_title).to.not.be.empty;
+                        // expect(result.data.linkedin_url ).to.not.be.null;
+                        // expect(result.data.linkedin_url).to.not.be.undefined;
+                        // expect(result.data.linkedin_url).to.not.be.empty;
