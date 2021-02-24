@@ -3,57 +3,46 @@ const axios = require('axios');
 const chai = require('chai');
 const sinon = require('sinon');
 const sinonChai = require('sinon-chai');
-const mock = require('./mock.json');
+const emails = require('./mock.js').emails;
+const phoneNumbers = require('./mock.js').phoneNumbers;
+const nameCompany = require('./mock.js').nameCompany;
+const linkedInUrls = require('./mock.js').linkedInUrls;
+const linkedInIds = require('./mock.js').linkedInIds;
 const expect = chai.expect;
-chai.use(sinonChai);
+const should = chai.should();
+const assert = chai.assert; 
+require('it-each')({ testPerIteration: true });
+const forEach = require('mocha-each'); 
+const dotenv = require('dotenv');
+dotenv.config();
+const API_KEY = process.env.API_KEY;
 
-describe('the User Class', () => {
-    const sandbox = sinon.createSandbox();
-    let user;
+describe('the phone', () => {
 
-    beforeEach(() => {
-        user = new User('codebubb');
-    });
+        it.each(phoneNumbers, `from the phone number, it should return the user with phone number, email, job title, mobile phone`, ['element'], (element, done) => {
+            // console.log("this is the forEach item ", );
+            axios.get(`https://api.peopledatalabs.com/v5/person/enrich?pretty=true&api_key=${API_KEY}&phone=${element}`)
+                .then((response) => {
+                    return response.data;
+                })
+                .then((result) => { 
+                    console.log("this is the result ", result);
+                    expect(result).to.be.a('object');
+                    // expect(result.data.mobile_phone).to.not.be.null;
+                    // expect(result.data.mobile_phone).to.not.be.undefined;
+                    // expect(result.data.mobile_phone).to.not.be.empty;
+                    // expect(result.data.work_email).to.not.be.null;
+                    // expect(result.data.work_email).to.not.be.undefined;
+                    // expect(result.data.work_email).to.not.be.empty;
+                    expect(result.data.job_title).to.not.be.null;
+                    expect(result.data.job_title).to.not.be.undefined;
+                    expect(result.data.job_title).to.not.be.empty;
+                    expect(result.data.linkedin_url ).to.not.be.null;
+                    expect(result.data.linkedin_url).to.not.be.undefined;
+                    expect(result.data.linkedin_url).to.not.be.empty;
 
-    afterEach(() => {
-        sandbox.restore();
-    });
-
-    it('should get the user id', (done) => {
-        console.log(dataMock);
-        const getStub = sandbox.stub(axios, 'get').resolves({ data: dataMock });
-        user.getUserId()
-            .then(result => {
-                expect(result).to.be.a('number');
-                expect(result).to.be.eq(1234);
-                expect(getStub).to.have.been.calledOnce;
-                expect(getStub).to.have.been.calledWith('https://api.github.com/users/codebubb');
-                done();
+                   done();
+                }).catch(done);
             })
-            .catch(done);
-    });
 
-    it('should return a repository if the user can view repos', (done) => {
-        const getStub = sandbox.stub(axios, 'get').resolves({ data: ['repo1', 'repo2', 'repo3']});
-        sandbox.stub(user, 'canViewRepos').value(true);
-        user.getUserRepo(2)
-            .then(response => {
-                expect(response).to.be.eq('repo3');
-                expect(getStub).to.have.been.calledOnceWith('https://api.github.com/users/codebubb/repos');
-                done();
-            })
-            .catch(done);
-    });
-
-    it('should return an error if the user cannot view repos', (done) => {
-        const getStub = sandbox.stub(axios, 'get');
-        sandbox.stub(user, 'canViewRepos').value(false);
-
-        user.getUserRepo(2)
-            .catch(error => {
-                expect(error).to.be.eq('Cannot view repos');
-                expect(getStub).to.not.have.been.called;
-                done();
-            });
-    });
 });
